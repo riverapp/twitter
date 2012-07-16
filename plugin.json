@@ -1,3 +1,16 @@
 {
-	"name": "Twitter"
+	"name": 				"Twitter",
+	"identifier":		"me.danpalmer.River.plugins.Twitter",
+	"developer": {
+		"name":				"Dan Palmer",
+		"email":			"dan.palmer@me.com",
+		"website":		"http://danpalmer.me/River/Twitter"
+	},
+	"icons": {
+		"small":			"icons/twitter16.png",
+		"large":			"icons/twitter32.png"
+	},
+	"providers": {
+		"stream": "TwitterStreamProvider"
+	}
 }
