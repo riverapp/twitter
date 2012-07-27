@@ -24,5 +24,13 @@
 		};
 	};
 
+	TwitterStreamProvider.prototype.authenticate = function(params) {
+		R.createAccount({
+			name: params.username,
+			secret: params.password,
+			identifier: params.username
+		});
+	};
+
 	return new TwitterStreamProvider();
 })
