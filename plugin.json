@@ -1,6 +1,8 @@
 {
 	"name": 				"Twitter",
 	"identifier":		"me.danpalmer.River.plugins.Twitter",
+	"description":  "See tweets, mentions and direct messages in your rivers.",
+	"titleImage":		"twitter.png",
 	"developer": {
 		"name":				"Dan Palmer",
 		"email":			"dan.palmer@me.com",
@@ -11,6 +13,6 @@
 		"large":			"icons/twitter32.png"
 	},
 	"providers": {
-		"stream": "TwitterStreamProvider"
+		"stream": "Twitter.js"
 	}
 }
