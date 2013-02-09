@@ -13,6 +13,6 @@
 		"large":			"icons/twitter32.png"
 	},
 	"providers": {
-		"stream": "Twitter.js"
+		"stream": "Twitter.coffee"
 	}
 }
