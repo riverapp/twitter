@@ -1,6 +1,13 @@
+# Plugin for Twitter that will retrieve Tweets from a user's timeline.
 class Twitter
 
+  # The constructor is required and will be given a delegate that can perform
+  # certain actions which are specific to this plugin.
   constructor: (delegate) ->
+    @delegate = delegate
+
+    # Also set up the class-scope configuration variables such as access URLs
+    # and OAuth credentials.
     @OAUTH_CONSUMER_KEY = 'A2LGbh5RqwVe4GYYCrgQ'
     @OAUTH_CONSUMER_SECRET = 'nSQMQ2YK3On7e3c9sp4DPMAKDKthzDVbBuUXwmh4HVo'
 
@@ -10,12 +17,12 @@ class Twitter
 
     @timeline_url = 'https://api.twitter.com/1/statuses/home_timeline.json'
     @avatar_url = 'http://api.twitter.com/1/users/profile_image?size=bigger&screen_name='
-    @delegate = delegate
 
-  ### 
-    Authentication
-  ###
 
+  #### Authentication
+
+  # **authRequirements** is called by River to find out how to create a new
+  # stream instance.
   authRequirements: (callback) ->
     @requestToken (err, response) =>
       if err
@@ -29,6 +36,7 @@ class Twitter
       }
       
 
+  # Helper method to retrieve a request token from Twitter.
   requestToken: (callback) ->
     callbackURL = @delegate.callbackURL()
     HTTP.request({
@@ -42,6 +50,11 @@ class Twitter
       }
     }, callback)
 
+
+  # **authenticate** is called by River with the parameters requested in
+  # *authRequirements* and should result in a call to *createAccount*.
+  #
+  # Swap the request token for an access token, the call *createAccount*.
   authenticate: (params) ->
     HTTP.request {
       url: @oauth_access_token_url,
@@ -62,6 +75,9 @@ class Twitter
       response = parseQueryString response
       @createAccount response
 
+
+  # Use the delegate to create an account with the user details returned by
+  # Twitter.
   createAccount: (params) ->
     @delegate.createAccount {
       name: params.screen_name,
@@ -72,10 +88,11 @@ class Twitter
       })
     }
 
-  ###
-    Updating
-  ###
-
+  
+  # Called by River to get a list of updates to be displayed to the user.
+  #
+  # Make an HTTP request to the user's timeline using the access token that
+  # was stored in the account's *secret* field.
   update: (user, callback) ->
     secret = JSON.parse(user.secret)
     HTTP.request {
@@ -96,6 +113,12 @@ class Twitter
       statuses = @parseStatuses response
       callback null, statuses
 
+
+  # Helper method to parse the statuses returned from the timeline into an array
+  # of **StatusUpdate** objects.
+  #
+  # Each update is checked to see if it is a retweet and formatted appropriately
+  # if it is.
   parseStatuses: (rawStatuses) ->
     statuses = []
     rawStatuses = JSON.parse rawStatuses
@@ -117,10 +140,9 @@ class Twitter
       statuses.push status
     return statuses
   
-  ###
-    Configuration
-  ###
 
+  # Return the update interval preferences in seconds. These settings are
+  # appropriate for a Twitter client.
   updatePreferences: (callback) ->
     callback {
       'interval': 60,
@@ -128,5 +150,8 @@ class Twitter
       'max':      300
     }
       
-
+# All plugins must be registered with the global **PluginManager**. The
+# plugin object passed should be a 'class' like object. This is easy with
+# CoffeeScript. The identifier passed here must match that given in the
+# plugin manifest file.
 PluginManager.registerPlugin(Twitter, 'me.danpalmer.River.plugins.Twitter')
